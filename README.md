@@ -10,14 +10,19 @@ Wake It Up (WIU) is a web application for managing remote servers. It allows use
 - User authentication and authorization using OAuth2
 - Responsive web interface built with Tailwind and Flowbite
 
+## Screenshots
+
+![Screenshot of WIU Dashboard](screenshot1.png)
+
 ## Prerequisites
 
-Before you begin, ensure you have met the following requirements:
+Before you begin the installation, ensure you have met the following requirements:
 
 - Node.js (v14 or higher)
 - npm (v6 or higher)
 - Git
 - An OAuth2 provider for user authentication
+- MongoDB database
 - Wake On LAN and Sleep On LAN compatible hardware
 
 ## Installation
