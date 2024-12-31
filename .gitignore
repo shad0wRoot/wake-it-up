@@ -1,3 +1,11 @@
+# App specific
+data/
+data.bak/
+data.old/
+
+# Mac OS
+.DS_Store
+
 # Logs
 logs
 *.log

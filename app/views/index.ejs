@@ -1,0 +1,34 @@
+<%- contentFor('name') %>
+Dashboard
+<%- contentFor('body') %>
+<script>
+	var confirmAction = (action, url) => {
+		if (confirm(`Are you sure you want to ${action}?`)) {
+			fetch(url, { method: 'POST' });
+		}
+	}
+</script>
+<button onclick="confirmAction('wake up all devices', '/api/wol/all')" class="px-6 py-3.5 text-base font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center w-full dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Wake up all devices</button>
+
+<div class="grid grid-cols-1 gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+  <% devices.forEach(device => { if (!device.disabled) { %>
+  <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <span class="w-7 h-7 text-gray-500 dark:text-gray-400 mb-3">
+      State: <wiu-updater url="/api/status/<%= device.id %>" interval="<%= ping_interval %>"></wiu-updater>
+    </span>
+    <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"><%= device.name %></h5>
+    <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">
+      IP: <%= device.ip %>
+    </p>
+    <button onclick="confirmAction('wake up <%= device.name %>', '/api/wol/<%= device.id %>')" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      Wake up
+    </button>
+    <% if (device.supportsSOL) { %>
+    <button onclick="confirmAction('put <%= device.name %> to sleep', '/api/sol/<%= device.id %>')" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+      Sleep
+    </button>
+    <% } %>
+  </div>
+
+  <% }}) %>
+</div>

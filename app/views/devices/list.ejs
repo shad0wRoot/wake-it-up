@@ -1,0 +1,117 @@
+<%- contentFor('name') %>
+Devices
+<%- contentFor('body') %>
+
+<% if (devices.length) { %>
+<!---->
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="px-6 py-3">
+          Status
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Name
+        </th>
+        <th scope="col" class="px-6 py-3">
+          IP address / Hostname
+        </th>
+        <th scope="col" class="px-6 py-3">
+          MAC address
+        </th>
+        <th scope="col" class="px-6 py-3">
+          supports SOL
+        </th>
+        <th scope="col" class="px-6 py-3">
+          <span class="sr-only">Edit</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% devices.forEach(device => { %>
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          <wiu-updater url="/api/status/<%= device.id %>" interval="<%= ping_interval %>"></wiu-updater>
+        </th>
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          <span class="<%= device.disabled ? 'text-red-500' : '' %>"><%= device.name %></span>
+        </th>
+        <td class="px-6 py-4">
+          <%= device.ip %>
+        </td>
+        <td class="px-6 py-4">
+          <%= device.mac %>
+        </td>
+        <td class="px-6 py-4">
+          <% if (device.supportsSOL) { %>
+          <i class="fa-solid fa-check"></i>
+          <% } else { %>
+          <i class="fa-solid fa-xmark"></i>
+          <% } %>
+        </td>
+        <td class="px-6 py-4 text-right">
+          <a href="/dashboard/devices/<%= device.id %>/edit" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+        </td>
+        <% }) %>
+        <%# 
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          offline
+        </th>
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          HP-STANICA
+        </th>
+        <td class="px-6 py-4">
+          10.10.0.3
+        </td>
+        <td class="px-6 py-4">
+          AA:AA:AA:AA:AA:AA
+        </td>
+        <td class="px-6 py-4">
+          <i class="fa-solid fa-xmark"></i>
+        </td>
+        <td class="px-6 py-4 text-right">
+          <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+        </td>
+      </tr>
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          offline
+        </th>
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          DELL T110 II
+        </th>
+        <td class="px-6 py-4">
+          10.10.0.2
+        </td>
+        <td class="px-6 py-4">
+          FF:FF:FF:FF:FF:FF
+        </td>
+        <td class="px-6 py-4">
+          <i class="fa-solid fa-check"></i>
+        </td>
+        <td class="px-6 py-4 text-right">
+          <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+        </td>
+      %>
+    </tbody>
+  </table>
+</div>
+
+<br>
+<a href="/dashboard/devices/add" class="px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+  <i class="fa-solid fa-plus">&nbsp;</i> add
+</a>
+<!---->
+
+<% } else { %>
+<div class="m-auto text-2xl text-center dark:text-gray-500">
+  <i class="fa-regular fa-face-frown"></i>
+  <h2 class="">No devices yet...</h2>
+  <br>
+  <a href="/dashboard/devices/add" class="px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+    <i class="fa-solid fa-plus">&nbsp;</i> add
+  </a>
+</div>
+<% } %>

@@ -1,0 +1,19 @@
+# mongo_url: mongodb://localhost:27017/
+
+# base_url: http://localhost:3000
+
+# ping_interval: 5000 # ms
+
+# server:
+#   port: 3000
+#   listen_address: 0.0.0.0
+
+# auth:
+#   session_length: 1209600 # 2 weeks
+#   oauth2:
+#     provider: <OAuth2 provider display name>
+#     scope: <scope>
+#     authorization_url: <auth_url>
+#     token_url: <token_url>
+#     client_id: <client_id>
+#     client_secret: <client_secret>

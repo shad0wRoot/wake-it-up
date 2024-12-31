@@ -1,0 +1,13 @@
+{
+	"semi": true,
+	"tabWidth": 4,
+	"useTabs": true,
+	"overrides": [
+		{
+			"files": ["*.js", "*.njs"],
+			"options": {
+				"semi": true
+			}
+		}
+	]
+}
