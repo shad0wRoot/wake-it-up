@@ -13,6 +13,8 @@ Wake It Up (WIU) is a web application for managing remote servers. It allows use
 ## Screenshots
 
 ![Screenshot of WIU Dashboard](screenshot1.png)
+![Screenshot of WIU Devices page](screenshot2.png)
+![Screenshot of WIU Device Add page](screenshot3.png)
 
 ## Prerequisites
 
