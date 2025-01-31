@@ -227,6 +227,11 @@ app.get("/auth/logout", (req, res) => {
 	});
 });
 
+// MQTT
+if (config.mqtt) {
+	util.initMqtt(config, logger);
+}
+
 // Error handling
 app.use((err, req, res, next) => {
 	logger.error(err.stack);

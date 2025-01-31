@@ -17,3 +17,20 @@
 #     token_url: <token_url>
 #     client_id: <client_id>
 #     client_secret: <client_secret>
+
+# mqtt:
+#   enable: false
+#   broker_url: mqtt://localhost:1883
+#   enable_auth: false
+#   username: <username>
+#   password: <password>
+#   topics:
+#     wol: wol
+#     sol: sol
+#     info: info
+#     error: error
+#   reconnect_period: 1000 # ms
+#   connect_timeout: 10000 # ms
+#   keepalive: 60 # s
+#   client_id: wake_it_up
+#   clean_session: true

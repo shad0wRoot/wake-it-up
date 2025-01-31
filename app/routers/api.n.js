@@ -18,6 +18,7 @@ router.post("/admin/devices/:id/edit", (req, res) => {
 		ip: rb.ip,
 		supportsSOL: rb.supportsSOL === "true",
 		disabled: rb.disabled === "true",
+		mqttName: rb.mqtt || undefined,
 	})
 		.then(() => {
 			res.redirect("/dashboard/devices");
@@ -47,6 +48,7 @@ router.post("/admin/devices/add", (req, res) => {
 		ip: rb.ip,
 		supportsSOL: rb.supportsSOL === "true",
 		disabled: rb.disabled === "true",
+		mqttName: rb.mqtt || undefined,
 	});
 	device
 		.save()

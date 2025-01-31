@@ -9,6 +9,7 @@ Wake It Up (WIU) is a web application for managing remote servers. It allows use
 - Ping servers to check their status
 - User authentication and authorization using OAuth2
 - Responsive web interface built with Tailwind and Flowbite
+- MQTT support
 
 ## Screenshots
 
@@ -65,6 +66,12 @@ Before you begin the installation, ensure you have met the following requirement
     ```
 
 2. Open your browser and navigate to your configured base URL
+
+## Changelog
+
+### 1.1.0 (beta)
+
+- Added option for MQTT waking up / putting devices to sleeping
 
 ## Contributing
 

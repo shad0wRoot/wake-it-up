@@ -7,6 +7,7 @@ const deviceSchema = new mongoose.Schema({
   ip: String,
   supportsSOL: Boolean,
   disabled: Boolean,
+  mqttName: String,
 });
 
 const Device = mongoose.model("Device", deviceSchema);

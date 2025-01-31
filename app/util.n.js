@@ -3,6 +3,9 @@ const path = require("path");
 const crypto = require("crypto");
 const winston = require("winston");
 const express = require("express");
+const Device = require("./models/device.n.js");
+const mqtt = require("mqtt");
+const pingus = require("pingus");
 
 /**
  * Get the absolute path to a file in the application data directory.
@@ -118,6 +121,177 @@ function generateSolMacAddr(macAddr) {
 }
 
 /**
+ * Initialize the MQTT client.
+ * @param {object} config - The configuration object.
+ * @param {winston.Logger} logger - The logger object.
+ */
+function initMqtt(config, logger) {
+	const brokerUrl = config.mqtt.broker_url;
+	const options = {
+		clientId: config.mqtt.client_id,
+		clean: config.mqtt.clean_session,
+		reconnectPeriod: config.mqtt.reconnect_period,
+		connectTimeout: config.mqtt.connect_timeout,
+		keepalive: config.mqtt.keepalive,
+	};
+
+	if (config.mqtt.enable_auth) {
+		options.username = config.mqtt.username;
+		options.password = config.mqtt.password;
+	}
+
+	const errTopic = config.mqtt.topics.error || "error";
+	const infoTopic = config.mqtt.topics.info || "info";
+	const wolTopic = config.mqtt.topics.wol || "wol";
+	const solTopic = config.mqtt.topics.sol || "sol";
+
+	// Create MQTT client
+	const client = mqtt.connect(brokerUrl, options);
+
+	// Handle successful connection
+	client.on("connect", () => {
+		logger.info("Connected to MQTT broker");
+
+		// Subscribe to a topic
+		client.subscribe(wolTopic, (err) => {
+			if (!err) {
+				logger.info("Subscribed to wol topic");
+			}
+		});
+
+		client.subscribe(solTopic, (err) => {
+			if (!err) {
+				logger.info("Subscribed to sol topic");
+			}
+		});
+
+		// Publish a message
+		client.publish(infoTopic, "Wake-It-Up client connected and logged in");
+	});
+
+	// Handle incoming messages
+	client.on("message", (topic, message) => {
+		logger.info(
+			`Received message: ${message.toString()} on topic: ${topic}`
+		);
+		let mqttName = message.toString();
+
+		if (!mqttName) {
+			logger.warn("Received empty message on topic:", topic);
+			return;
+		}
+		switch (topic) {
+			case wolTopic:
+				if (mqttName === "all") {
+					Device.find()
+						.then((devices) => {
+							devices.forEach((device) => {
+								if (device.disabled) return;
+								pingus
+									.wol(device.mac)
+									.then((result) => {
+										logger.info(
+											'WOL sent to device "' +
+												device.name +
+												'"'
+										);
+										client.publish(infoTopic, "WOL sent to device: " + device.name);
+									})
+									.catch((err) => {
+										logger.error(err);
+										client.publish(errTopic, err.message);
+									});
+							});
+						})
+						.catch((err) => {
+							logger.error(err);
+							client.publish(errTopic, "Internal server error");
+						});
+					client.publish(infoTopic, "WOL sent to all devices");
+				} else {
+					Device.findOne({ mqttName }).then((device) => {
+						if (!device || device.disabled) {
+							logger.error("Device not found: " + mqttName);
+							client.publish(
+								errTopic,
+								"Device not found: " + mqttName
+							);
+						} else {
+							pingus
+								.wol(device.mac)
+								.then((result) => {
+									logger.info(
+										'WOL sent to device "' +
+											device.name +
+											'"'
+									);
+									client.publish(
+										infoTopic,
+										"WOL sent to device: " + device.name
+									);
+								})
+								.catch((err) => {
+									logger.error(err);
+									client.publish(errTopic, err.message);
+								});
+						}
+					});
+				}
+				break;
+			case solTopic:
+				Device.findOne({ mqttName }).then((device) => {
+					if (!device || device.disabled) {
+						logger.error("Device not found: " + mqttName);
+						client.publish(
+							errTopic,
+							"Device not found: " + mqttName
+						);
+					} else {
+						pingus
+							.sol(generateSolMacAddr(device.mac))
+							.then((result) => {
+								logger.info(
+									'SOL sent to device "' + device.name + '"'
+								);
+								client.publish(
+									infoTopic,
+									"SOL sent to device: " + device.name
+								);
+							})
+							.catch((err) => {
+								logger.error(err);
+								client.publish(errTopic, err.message);
+							});
+					}
+				});
+				break;
+			default:
+				logger.warn("Unknown topic:", topic);
+				break;
+		}
+	});
+
+	// Handle connection errors
+	client.on("error", (err) => {
+		logger.error("MQTT error:", err);
+	});
+
+	// Handle disconnection and auto-retry
+	client.on("offline", () => {
+		logger.warn("MQTT client is offline, attempting to reconnect...");
+	});
+
+	client.on("reconnect", () => {
+		logger.info("Reconnecting to MQTT broker...");
+	});
+
+	// Handle when the client is closed
+	client.on("close", () => {
+		logger.info("Connection closed, retrying...");
+	});
+}
+
+/**
  * Restart the server by writing a restart file.
  */
 function restartApp() {
@@ -136,5 +310,6 @@ module.exports = {
 	ensureAdmin,
 	getSessionSecret,
 	generateSolMacAddr,
+	initMqtt,
 	restartApp,
 };
