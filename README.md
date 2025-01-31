@@ -76,7 +76,7 @@ To control devices with MQTT:
 
 ### 1.1.0 (beta)
 
-- Added option for MQTT waking up / putting devices to sleeping
+- Added option for MQTT waking up / putting devices to sleep
 
 ## Contributing
 
