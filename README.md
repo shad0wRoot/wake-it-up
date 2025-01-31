@@ -67,6 +67,11 @@ Before you begin the installation, ensure you have met the following requirement
 
 2. Open your browser and navigate to your configured base URL
 
+To control devices with MQTT:
+
+1. Set an unique MQTT name for them in settings
+2. Send MQTT message to preconfigured topic containing only the MQTT device name
+
 ## Changelog
 
 ### 1.1.0 (beta)
